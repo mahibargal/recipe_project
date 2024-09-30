@@ -1,10 +1,11 @@
 import * as model from './model.js';
 import recipeView from './views/recipeView.js';
-import SearchRecipeView from './views/searchRecipeView';
+import SearchRecipeView from './views/searchRecipeView.js'
 import icons from '../img/icons.svg' //parcel1
 import icons from 'url:../img/icons.svg';
 import 'core-js/stable'; //polyfilling rest
 import 'regenerator-runtime/runtime' //polyfilling async await
+import resultsView from './views/resultsView.js';
 console.log(icons)
 
 
@@ -42,16 +43,18 @@ const controlRecipes = async function (e) {
   }
 }
 
-const controlAllRecipeData = async function () {
+const controlSearchRecipeData = async function () {
   try {
     //getting search key
-    const query = searchRecipeView.getQuery();
+    const query = SearchRecipeView.getQuery();
     //clearing input
     if (!query) return;
-    await model.loadSearchRecipes(query)
+    resultsView.rederSpinner();
+    await model.loadSearchRecipes(query);
 
-    const recipes = model.state.searchRecipe.searchRecipeData;
-    console.log(recipes)
+    const recipes = model.getPageRecipeData(1);
+    resultsView.render(recipes);
+
   } catch (err) {
     console.log(err);
     throw err;
@@ -60,7 +63,7 @@ const controlAllRecipeData = async function () {
 
 const init = function(){
   recipeView.addHandlerRender(controlRecipes);
-  SearchRecipeView.addHandlerRender(controlAllRecipeData);
+  SearchRecipeView.addHandlerRender(controlSearchRecipeData);
 }
 init();
 // getRecipe();
