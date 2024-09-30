@@ -1,52 +1,19 @@
 
 import icons from 'url:../../img/icons.svg';
 import { Fraction } from 'fractional';
-class RecipeView {
-    #data;
-    #parentElement = document.querySelector('.recipe');;
-    render(data) {
-        this.#data = data;
-        const markUp = this.#generateMarkup();
-        this.#clear();
-        this.#parentElement.insertAdjacentHTML('afterbegin', markUp)
+import { View } from './view.js';
+class RecipeView extends View {
+  _data;
+  _parentElement = document.querySelector('.recipe');;
 
-    }
+  addHandlerRender(handler) {
+    window.addEventListener('hashchange', handler);
+    window.addEventListener('load', handler);
+  }
 
-    #clear() {
-        this.#parentElement.innerHTML = '';
-    }
-    addHandlerRender(handler) {
-        window.addEventListener('hashchange', handler);
-        window.addEventListener('load', handler);
-    }
-    renderError(msg = 'No recipes found for your query. Please try again!') {
-        const markUp = `<div class="error">
-        <div>
-          <svg>
-            <use href="${icons}#icon-alert-triangle"></use>
-          </svg>
-        </div>
-        <p>${msg}</p>
-      </div>`;
-      this.#clear();
-      this.#parentElement.insertAdjacentHTML('afterbegin', markUp)
-
-    }
-    renderSuccess(succes = 'Start by searching for a recipe or an ingredient. Have fun!') {
-        const markUp = `<div class="message">
-        <div>
-        <svg>
-            <use href="${icons}#icon-smile"></use>
-        </svg>
-        </div>
-        <p>${succes}</p>
-        </div>`;
-        this.#clear();
-        this.#parentElement.insertAdjacentHTML('afterbegin', markUp)
-    }
-    #generateMarkup() {
-        const recipe = this.#data;
-        return `<figure class="recipe__fig">
+  _generateMarkup() {
+    const recipe = this._data;
+    return `<figure class="recipe__fig">
         <img src="${recipe?.imageUrl}" alt="${recipe?.title}" class="recipe__img" />
         <h1 class="recipe__title">
           <span>${recipe?.title}</span>
@@ -98,8 +65,8 @@ class RecipeView {
         <h2 class="heading--2">Recipe ingredients</h2>
         <ul class="recipe__ingredient-list">
     
-        ${recipe?.ingredients.map((ingredient) => this.#generateIngredient(ingredient)
-        ).join('')}
+        ${recipe?.ingredients.map((ingredient) => this._generateIngredient(ingredient)
+    ).join('')}
         </ul>
       </div>
     
@@ -122,10 +89,10 @@ class RecipeView {
         </a>
       </div>`;
 
-    }
+  }
 
-    #generateIngredient(ingredient) {
-        return `<li class="recipe__ingredient">
+  _generateIngredient(ingredient) {
+    return `<li class="recipe__ingredient">
         <svg class="recipe__icon">
           <use href="${icons}#icon-check"></use>
         </svg>
@@ -135,18 +102,7 @@ class RecipeView {
           ${ingredient?.description} 
        </div>
       </li>`;
-    }
-
-    rederSpinner = function () {
-        const markUp =
-            `<div class="spinner">
-        <svg>
-          <use href="${icons}#icon-loader"></use>
-        </svg>
-      </div>`;
-        this.#parentElement.innerHTML = '';
-        this.#parentElement.insertAdjacentHTML('afterbegin', markUp)
-    }
+  }
 
 }
 
