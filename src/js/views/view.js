@@ -11,6 +11,33 @@ export class View{
         this._parentElement.innerHTML = markUp;
     }
 
+  update(data) {
+    this._data = data;
+    if (data.length === 0) return;
+    const newMarkup = this._generateMarkup();
+
+    const newDom = document.createRange().createContextualFragment(newMarkup); //convert html string to dom
+    const newElements = Array.from(newDom.querySelectorAll('*')) //creating array of all elements
+    const curElements = Array.from(this._parentElement.querySelectorAll('*'));
+
+    newElements.forEach((newEl, i) => {
+      const curEl = curElements[i];
+      if (!curEl) return
+
+      //update testcontent
+      if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() != '') {
+        curEl.textContent = newEl.textContent;
+      }
+
+      //updating attributes
+      if (!newEl.isEqualNode(curEl)) {
+        Array.from(newEl.attributes).forEach(attr => {
+          curEl.setAttribute(attr.name, attr.value)
+        })
+      }
+    })
+
+  }
 
     _clear() {
         this._parentElement.innerHTML = '';

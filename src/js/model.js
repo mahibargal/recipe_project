@@ -7,7 +7,7 @@ export const state = {
         query: '',
         searchRecipeData: [],
         resultPerPage:RES_PER_PAGE,
-        startPage:1
+        page:1
 
     }
 }
@@ -52,12 +52,18 @@ export const loadSearchRecipes = async function(query){
         throw err;
         console.error(err);
     }
-
-    
 }
-export const getPageRecipeData = function (page= state.searchRecipe.startPage) {
-    state.searchRecipe.startPage = page;
-    const stratIndex = (page - 1) * 10
-    const endIndex = page * 10;
+
+export const getPageRecipeData = function (page= state.searchRecipe.page) {
+    state.searchRecipe.page = page;
+    const stratIndex = (page - 1) * RES_PER_PAGE
+    const endIndex = page * RES_PER_PAGE;
     return state.searchRecipe.searchRecipeData.slice(stratIndex, endIndex);
+}
+
+export const modifyServing = function (newServing) {
+    state.recipe.ingredients.forEach(ing => {
+        ing.quantity = ing.quantity * newServing / state.recipe.servings;
+    })
+    state.recipe.servings = newServing
 }

@@ -4,13 +4,23 @@ import { Fraction } from 'fractional';
 import { View } from './view.js';
 class RecipeView extends View {
   _data;
-  _parentElement = document.querySelector('.recipe');;
+  _parentElement = document.querySelector('.recipe');
 
   addHandlerRender(handler) {
     window.addEventListener('hashchange', handler);
     window.addEventListener('load', handler);
   }
 
+  addHandlerServings(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--update-servings');
+      if (!btn) return;
+      const newServing = +btn.dataset.updateserving;
+      console.log(newServing);
+      if(newServing>0)handler(newServing);
+    })
+
+  }
   _generateMarkup() {
     const recipe = this._data;
     return `<figure class="recipe__fig">
@@ -36,12 +46,12 @@ class RecipeView extends View {
           <span class="recipe__info-text">servings</span>
     
           <div class="recipe__info-buttons">
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings" data-updateServing=${recipe?.servings-1}>
               <svg>
                 <use href="${icons}#icon-minus-circle"></use>
               </svg>
             </button>
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings" data-updateServing=${recipe?.servings+1}>
               <svg>
                 <use href="${icons}#icon-plus-circle"></use>
               </svg>
