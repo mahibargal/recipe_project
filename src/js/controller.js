@@ -6,6 +6,7 @@ import icons from 'url:../img/icons.svg';
 import 'core-js/stable'; //polyfilling rest
 import 'regenerator-runtime/runtime' //polyfilling async await
 import resultsView from './views/resultsView.js';
+import paginationView from './views/paginationView.js';
 console.log(icons)
 
 
@@ -28,13 +29,13 @@ const controlRecipes = async function (e) {
     if (!id) return;
 
     recipeView.rederSpinner();
-
+    //update results view to mark selected search result
+    resultsView.update(model.getPageRecipeData());
     await model.loadRecipe(id);
 
     const recipe = model.state.recipe;
 
     recipeView.render(model.state.recipe)
-
     console.log(recipe)
   }
   catch (err) {
@@ -52,8 +53,11 @@ const controlSearchRecipeData = async function () {
     resultsView.rederSpinner();
     await model.loadSearchRecipes(query);
 
-    const recipes = model.getPageRecipeData(1);
+    const recipes = model.getPageRecipeData();
     resultsView.render(recipes);
+
+    //render Pagination
+    paginationView.render(model.state.searchRecipe);
 
   } catch (err) {
     console.log(err);
@@ -61,9 +65,27 @@ const controlSearchRecipeData = async function () {
   }
 }
 
-const init = function(){
+const controlPagination = function (gotoPage) {
+  const recipes = model.getPageRecipeData(gotoPage);
+  resultsView.render(recipes);
+
+  paginationView.render(model.state.searchRecipe);
+}
+const controlRecipeServing = function (newServing) {
+
+  model.modifyServing(newServing);
+  const recipe = model.state.recipe;
+
+  // recipeView.render(model.state.recipe)
+  recipeView.update(recipe);
+
+}
+
+const init = function () {
   recipeView.addHandlerRender(controlRecipes);
+  recipeView.addHandlerServings(controlRecipeServing)
   SearchRecipeView.addHandlerRender(controlSearchRecipeData);
+  paginationView.addHandlerClick(controlPagination)
 }
 init();
 // getRecipe();
