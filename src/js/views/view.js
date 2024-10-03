@@ -13,7 +13,7 @@ export class View{
 
   update(data) {
     this._data = data;
-    if (data.length === 0) return;
+    if (data?.length === 0) return;
     const newMarkup = this._generateMarkup();
 
     const newDom = document.createRange().createContextualFragment(newMarkup); //convert html string to dom
