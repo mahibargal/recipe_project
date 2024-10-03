@@ -7,6 +7,9 @@ import 'core-js/stable'; //polyfilling rest
 import 'regenerator-runtime/runtime' //polyfilling async await
 import resultsView from './views/resultsView.js';
 import paginationView from './views/paginationView.js';
+import bookMarkView from './views/bookMarkView.js';
+import addRecipeView from './views/recipeAddView';
+import recipeAddView from './views/recipeAddView';
 console.log(icons)
 
 
@@ -37,6 +40,8 @@ const controlRecipes = async function (e) {
 
     recipeView.render(model.state.recipe)
     console.log(recipe)
+
+    bookMarkView.update(model.state.bookMarks)
   }
   catch (err) {
     recipeView.renderError(err);
@@ -75,10 +80,40 @@ const controlRecipeServing = function (newServing) {
 
   model.modifyServing(newServing);
   const recipe = model.state.recipe;
-
   // recipeView.render(model.state.recipe)
   recipeView.update(recipe);
 
+}
+
+const controlAddBookmark = function(){
+  model.state.recipe.bookmarked ? model.deleteBookMark(model.state.recipe.id):  model.addBookMark(model.state.recipe); 
+  recipeView.update(model.state.recipe)
+  bookMarkView.render(model.state.bookMarks)
+}
+
+const loadBookmarksandShow = function(){
+  //pageloads check localstorage bookmarks and add on UI.
+  bookMarkView.render(model.state.bookMarks)
+}
+
+const controlAddRecipe = async function (recipe) {
+  try {
+    addRecipeView.rederSpinner();
+    await model.addRecipe(recipe);
+
+    addRecipeView.renderSuccess();
+    recipeView.render(model.state.recipe);
+
+
+    setTimeout(() => {
+      addRecipeView.toggleOverlay()
+    }, 2000);
+    console.log(model.state.recipe);
+
+  } catch (err) {
+    recipeAddView.renderError(err);
+  }
+  // console.log(recipe);
 }
 
 const init = function () {
@@ -86,7 +121,8 @@ const init = function () {
   recipeView.addHandlerServings(controlRecipeServing)
   SearchRecipeView.addHandlerRender(controlSearchRecipeData);
   paginationView.addHandlerClick(controlPagination)
+  recipeView.addHandlerBookmark(controlAddBookmark);
+  bookMarkView.addHandlerBookMark(loadBookmarksandShow);
+  addRecipeView._addHandlerUploadRecipe(controlAddRecipe);
 }
 init();
-// getRecipe();
-
