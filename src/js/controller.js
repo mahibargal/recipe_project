@@ -103,7 +103,8 @@ const controlAddRecipe = async function (recipe) {
 
     addRecipeView.renderSuccess();
     recipeView.render(model.state.recipe);
-
+    bookMarkView.render(model.state.bookMarks);
+    window.history.pushState(null,'',`#${model.state?.recipe?.id}`)
 
     setTimeout(() => {
       addRecipeView.toggleOverlay()

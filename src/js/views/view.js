@@ -3,6 +3,11 @@ import icons from 'url:../../img/icons.svg';
 
 export class View{
 
+  /**
+   * 
+   * @param {*} data 
+   * @returns 
+   */
     render(data) {
         this._data = data;
         if(data.length===0) return this.renderError();
